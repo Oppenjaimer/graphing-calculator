@@ -21,15 +21,8 @@
 #define ZOOM_MAX_LIMIT   16.0f  // 16x scale
 
 // Grid config
-#define GRID_LINES          100
 #define GRID_SPACING        50.0f
-#define GRID_CENTER_OFFSET  (GRID_LINES * GRID_SPACING * 0.25f)
-#define GRID_ROTATION_ANGLE 90.0f
 #define GRID_COLOR          (Color){235, 219, 178, 51} // Bright white (20% opacity)
-
-// Axes config
-#define AXIS_LENGTH    10000.0f
-#define AXIS_THICKNESS 1.0f
 
 // Colors (Gruvbox Dark)
 #define COLOR_BRIGHT_BLACK  (Color){146, 131, 116, 255}
