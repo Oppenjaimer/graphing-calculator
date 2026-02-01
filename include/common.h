@@ -6,6 +6,31 @@
 #define HEIGHT  720
 #define FPS     60
 
+// Camera settings
+#define CAMERA_INITIAL_ZOOM     1.0f
+#define CAMERA_INITIAL_ROTATION 0.0f
+#define CAMERA_INITIAL_TARGET   (Vector2){0, 0}
+#define CAMERA_OFFSET_CENTER    (Vector2){WIDTH / 2.0f, HEIGHT / 2.0f}
+
+// Translate config
+#define DRAG_SENSITIVITY 1.0f
+
+// Zoom config
+#define ZOOM_SENSITIVITY 0.2f
+#define ZOOM_MIN_LIMIT   0.33f  // 1/3th scale
+#define ZOOM_MAX_LIMIT   16.0f  // 16x scale
+
+// Grid config
+#define GRID_LINES          100
+#define GRID_SPACING        50.0f
+#define GRID_CENTER_OFFSET  (GRID_LINES * GRID_SPACING * 0.25f)
+#define GRID_ROTATION_ANGLE 90.0f
+#define GRID_COLOR          (Color){235, 219, 178, 51} // Bright white (20% opacity)
+
+// Axes config
+#define AXIS_LENGTH    10000.0f
+#define AXIS_THICKNESS 1.0f
+
 // Colors (Gruvbox Dark)
 #define COLOR_BRIGHT_BLACK  (Color){146, 131, 116, 255}
 #define COLOR_BRIGHT_BLUE   (Color){131, 165, 152, 255}
