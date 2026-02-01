@@ -90,23 +90,28 @@ void zoom(Camera2D *camera) {
 /*                                    DRAW                                    */
 /* -------------------------------------------------------------------------- */
 
-void draw_grid() {
-    // Grid lines half-length
-    float limit = (GRID_LINES / 2.0f) * GRID_SPACING;
+void draw_grid(Camera2D *camera) {
+    // Get screen vertices in world space
+    Vector2 screen_top_left = GetScreenToWorld2D((Vector2){0, 0}, *camera);
+    Vector2 screen_bottom_right = GetScreenToWorld2D((Vector2){WIDTH, HEIGHT}, *camera);
 
-    for (int i = -GRID_LINES / 2; i <= GRID_LINES / 2; i++) {
-        float pos = i * GRID_SPACING;
+    // Compute start and end points for grid lines
+    float start_x = floorf(screen_top_left.x / GRID_SPACING) * GRID_SPACING;
+    float end_x = ceilf(screen_bottom_right.x / GRID_SPACING) * GRID_SPACING;
+    float start_y = floorf(screen_top_left.y / GRID_SPACING) * GRID_SPACING;
+    float end_y = ceilf(screen_bottom_right.y / GRID_SPACING) * GRID_SPACING;
 
-        // Vertical and horizontal lines
-        DrawLine(pos, -limit, pos, limit, GRID_COLOR);
-        DrawLine(-limit, pos, limit, pos, GRID_COLOR);
+    // Draw vertical lines
+    for (float x = start_x; x <= end_x; x += GRID_SPACING) {
+        bool is_axis = (x == 0);
+        DrawLine(x, screen_top_left.y, x, screen_bottom_right.y, is_axis ? COLOR_BRIGHT_WHITE : GRID_COLOR);
     }
-}
 
-void draw_axes() {
-    // Draw X and Y axes
-    DrawLine(-AXIS_LENGTH, 0, AXIS_LENGTH, 0, COLOR_BRIGHT_WHITE);
-    DrawLine(0, -AXIS_LENGTH, 0, AXIS_LENGTH, COLOR_BRIGHT_WHITE);
+    // Draw horizontal lines
+    for (float y = start_y; y <= end_y; y += GRID_SPACING) {
+        bool is_axis = (y == 0);
+        DrawLine(screen_top_left.x, y, screen_bottom_right.x, y, is_axis ? COLOR_BRIGHT_WHITE : GRID_COLOR);
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -148,8 +153,7 @@ int main() {
 
         // World space
         BeginMode2D(camera);
-        draw_grid();
-        draw_axes();
+        draw_grid(&camera);
         DrawCircle(0, 0, 10, COLOR_RED);
         EndMode2D();
 
