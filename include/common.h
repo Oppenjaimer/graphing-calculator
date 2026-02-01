@@ -1,8 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include "raylib.h"
-
 // Window parameters
 #define WIDTH   1280
 #define HEIGHT  720
