@@ -95,22 +95,45 @@ void draw_grid(Camera2D *camera) {
     Vector2 screen_top_left = GetScreenToWorld2D((Vector2){0, 0}, *camera);
     Vector2 screen_bottom_right = GetScreenToWorld2D((Vector2){WIDTH, HEIGHT}, *camera);
 
+    // Increase/Decrease adaptive spacing when zooming out/in
+    float dynamic_spacing = GRID_INITIAL_SPACING;
+    while (dynamic_spacing * camera->zoom < GRID_MIN_SPACING) dynamic_spacing *= 2.0f;
+    while (dynamic_spacing * camera->zoom > GRID_MAX_SPACING) dynamic_spacing /= 2.0f;
+
     // Compute start and end points for grid lines
-    float start_x = floorf(screen_top_left.x / GRID_SPACING) * GRID_SPACING;
-    float end_x = ceilf(screen_bottom_right.x / GRID_SPACING) * GRID_SPACING;
-    float start_y = floorf(screen_top_left.y / GRID_SPACING) * GRID_SPACING;
-    float end_y = ceilf(screen_bottom_right.y / GRID_SPACING) * GRID_SPACING;
+    float start_x = floorf(screen_top_left.x / dynamic_spacing) * dynamic_spacing;
+    float end_x   = ceilf(screen_bottom_right.x / dynamic_spacing) * dynamic_spacing;
+    float start_y = floorf(screen_top_left.y / dynamic_spacing) * dynamic_spacing;
+    float end_y   = ceilf(screen_bottom_right.y / dynamic_spacing) * dynamic_spacing;
+
+    // Apply grid render buffer to coordinates
+    start_x -= GRID_RENDER_BUFFER * dynamic_spacing;
+    end_x   += GRID_RENDER_BUFFER * dynamic_spacing;
+    start_y -= GRID_RENDER_BUFFER * dynamic_spacing;
+    end_y   += GRID_RENDER_BUFFER * dynamic_spacing;
 
     // Draw vertical lines
-    for (float x = start_x; x <= end_x; x += GRID_SPACING) {
-        bool is_axis = (x == 0);
-        DrawLine(x, screen_top_left.y, x, screen_bottom_right.y, is_axis ? COLOR_BRIGHT_WHITE : GRID_COLOR);
+    for (float x = start_x; x <= end_x; x += dynamic_spacing) {
+        // Make major lines brighter
+        Color color = COLOR_BRIGHT_WHITE;
+        int line_index = (int)lroundf(x / dynamic_spacing);
+        color.a = (line_index % GRID_MAJOR_STEP == 0) ? GRID_MAJOR_OPACITY : GRID_MINOR_OPACITY;
+
+        // Draw axis or generic vertical line
+        bool is_axis = fabsf(x) < GRID_AXIS_THRESHOLD;
+        DrawLineV((Vector2){x, screen_top_left.y}, (Vector2){x, screen_bottom_right.y}, is_axis ? COLOR_BRIGHT_WHITE : color);
     }
 
     // Draw horizontal lines
-    for (float y = start_y; y <= end_y; y += GRID_SPACING) {
-        bool is_axis = (y == 0);
-        DrawLine(screen_top_left.x, y, screen_bottom_right.x, y, is_axis ? COLOR_BRIGHT_WHITE : GRID_COLOR);
+    for (float y = start_y; y <= end_y; y += dynamic_spacing) {
+        // Make major lines brighter
+        Color color = COLOR_BRIGHT_WHITE;
+        int line_index = (int)lroundf(y / dynamic_spacing);
+        color.a = (line_index % GRID_MAJOR_STEP == 0) ? GRID_MAJOR_OPACITY : GRID_MINOR_OPACITY;
+
+        // Draw axis or generic horizontal line
+        bool is_axis = fabsf(y) < GRID_AXIS_THRESHOLD;
+        DrawLineV((Vector2){screen_top_left.x, y}, (Vector2){screen_bottom_right.x, y}, is_axis ? COLOR_BRIGHT_WHITE : color);
     }
 }
 

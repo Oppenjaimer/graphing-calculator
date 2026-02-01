@@ -17,12 +17,18 @@
 
 // Zoom config
 #define ZOOM_SENSITIVITY 0.2f
-#define ZOOM_MIN_LIMIT   0.33f  // 1/3th scale
+#define ZOOM_MIN_LIMIT   0.25f  // 1/4th scale
 #define ZOOM_MAX_LIMIT   16.0f  // 16x scale
 
 // Grid config
-#define GRID_SPACING        50.0f
-#define GRID_COLOR          (Color){235, 219, 178, 51} // Bright white (20% opacity)
+#define GRID_INITIAL_SPACING 50.0f
+#define GRID_MIN_SPACING     30.0f
+#define GRID_MAX_SPACING     70.0f
+#define GRID_MAJOR_STEP      5
+#define GRID_MINOR_OPACITY   51  // 20%
+#define GRID_MAJOR_OPACITY   153 // 60%
+#define GRID_RENDER_BUFFER   2.0f
+#define GRID_AXIS_THRESHOLD  0.001f
 
 // Colors (Gruvbox Dark)
 #define COLOR_BRIGHT_BLACK  (Color){146, 131, 116, 255}
