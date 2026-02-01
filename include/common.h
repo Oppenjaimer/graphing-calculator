@@ -36,6 +36,10 @@
 #define GRID_LABEL_OFFSET       5.0f
 #define GRID_LABEL_CLAMP_OFFSET 10.0f
 
+// Graphing settings
+#define ASYMPTOTE_THRESHOLD (HEIGHT * 2)
+#define LINE_THICKNESS      2.0f
+
 // Colors (Gruvbox Dark)
 #define COLOR_BRIGHT_BLACK  (Color){146, 131, 116, 255}
 #define COLOR_BRIGHT_BLUE   (Color){131, 165, 152, 255}

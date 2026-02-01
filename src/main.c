@@ -5,6 +5,8 @@
 #include <stdio.h>
 
 #include "common.h"
+#include "environment.h"
+#include "parser.h"
 
 /* -------------------------------------------------------------------------- */
 /*                                   CONFIG                                   */
@@ -56,6 +58,20 @@ bool set_resource_dir(const char* folder_name) {
     }
 
     return false;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                   COORDS                                   */
+/* -------------------------------------------------------------------------- */
+
+float pixels_to_math(float px) {
+    // Convert to math units
+    return px / GRID_INITIAL_SPACING * GRID_UNITS_PER_SPACE;
+}
+
+float math_to_pixels(float math) {
+    // Convert to pixels
+    return math / GRID_UNITS_PER_SPACE * GRID_INITIAL_SPACING;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -171,7 +187,7 @@ void draw_grid_labels(Camera2D *camera, float dynamic_spacing) {
         Vector2 screen_pos = GetWorldToScreen2D(world_pos, *camera);
 
         // Calculate text and its width
-        float math_value = x / GRID_INITIAL_SPACING * GRID_UNITS_PER_SPACE;
+        float math_value = pixels_to_math(x);
         const char* text = TextFormat("%g", math_value);
         int text_width = MeasureText(text, GRID_LABEL_SIZE);
 
@@ -195,7 +211,7 @@ void draw_grid_labels(Camera2D *camera, float dynamic_spacing) {
         Vector2 screen_pos = GetWorldToScreen2D(world_pos, *camera);
 
         // Calculate text and its width
-        float math_value = -y / GRID_INITIAL_SPACING * GRID_UNITS_PER_SPACE;
+        float math_value = pixels_to_math(-y);
         const char* text = TextFormat("%g", math_value);
         int text_width = MeasureText(text, GRID_LABEL_SIZE);
 
@@ -209,11 +225,68 @@ void draw_grid_labels(Camera2D *camera, float dynamic_spacing) {
     }
 }
 
+void plot_function(Camera2D *camera, Node *expression, SymbolTable *symbol_table) {
+    // Get screen vertices in world space
+    Vector2 screen_top_left = GetScreenToWorld2D((Vector2){0, 0}, *camera);
+    Vector2 screen_bottom_right = GetScreenToWorld2D((Vector2){WIDTH, HEIGHT}, *camera);
+
+    // Get sampling pixel step
+    int samples = WIDTH;
+    float pixel_step = (screen_bottom_right.x - screen_top_left.x) / samples;
+
+    Vector2 previous_point = {0};
+    bool has_previous = false;
+
+    for (int i = 0; i <= samples; i++) {
+        // Get X coordinate and update symbol table
+        float x_world = screen_top_left.x + (i * pixel_step);
+        float x_math = pixels_to_math(x_world);
+        symbol_table_set(symbol_table, "x", 1, x_math);
+
+        // Apply function
+        float y_math = (float)env_evaluate(expression, symbol_table);
+        if (isnan(y_math)) {
+            has_previous = false;
+            continue;
+        }
+
+        // Get Y coordinate
+        float y_world = math_to_pixels(-y_math);
+
+        // Connect previous and current point
+        Vector2 current_point = {x_world, y_world};
+        if (has_previous) {
+            // Check for asymptotes
+            if (fabsf(current_point.y - previous_point.y) < ASYMPTOTE_THRESHOLD) {
+                DrawLineEx(previous_point, current_point, LINE_THICKNESS / camera->zoom, COLOR_GREEN);
+            }
+        }
+
+        previous_point = current_point;
+        has_previous = true;
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                    MAIN                                    */
 /* -------------------------------------------------------------------------- */
 
-int main() {
+int main(int argc, char **argv) {
+    // Check number of args
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s EXPRESSION\n", argv[0]);
+        return 1;
+    }
+
+    // Set up parser and environment
+    Parser parser = parser_init();
+    SymbolTable symbol_table = symbol_table_init();
+    symbol_table_set(&symbol_table, "x", 1, 0.0);
+
+    // Parse expression
+    Node *root = parser_parse(&parser, argv[1]);
+    if (root == NULL) return 1;
+
     // Initialization
     SetTraceLogCallback(custom_trace_log);
     InitWindow(WIDTH, HEIGHT, "Graphing Calculator");
@@ -255,6 +328,7 @@ int main() {
         // World space
         BeginMode2D(camera);
         draw_grid(&camera, dynamic_spacing);
+        plot_function(&camera, root, &symbol_table);
         EndMode2D();
 
         // Screen space
@@ -265,5 +339,13 @@ int main() {
 
     // Cleanup
     CloseWindow();
+    symbol_table_free(&symbol_table);
+    parser_free(&parser);
+
     return 0;
 }
+
+// TODO: add coordinates above cursor
+// TODO: check whether expression is valid after parsing
+// TODO: plot multiple functions at once
+// TODO: add shortcuts (zoom in/out, return to origin)
