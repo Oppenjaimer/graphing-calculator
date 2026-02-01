@@ -218,6 +218,7 @@ int main() {
     SetTraceLogCallback(custom_trace_log);
     InitWindow(WIDTH, HEIGHT, "Graphing Calculator");
     SetTargetFPS(FPS);
+    SetMouseCursor(MOUSE_CURSOR_CROSSHAIR);
 
     // Set resources directory
     char *resource_dir = "resources";
