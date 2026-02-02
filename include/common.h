@@ -13,8 +13,8 @@
 #define CAMERA_OFFSET_CENTER    (Vector2){WIDTH / 2.0f, HEIGHT / 2.0f}
 
 // Translate config
-#define DRAG_SENSITIVITY          1.0f
-#define DRAG_SHORTCUT_SENSITIVITY 10.0f
+#define PAN_SENSITIVITY          1.0f
+#define PAN_SHORTCUT_SENSITIVITY 10.0f
 
 // Zoom config
 #define ZOOM_SENSITIVITY          0.15f
