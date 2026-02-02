@@ -38,6 +38,11 @@
 #define GRID_LABEL_OFFSET       5.0f
 #define GRID_LABEL_CLAMP_OFFSET 10.0f
 
+// Coords display config
+#define COORDS_DISPLAY_SIZE    20
+#define COORDS_DISPLAY_SPACING 2
+#define COORDS_DISPLAY_OFFSET  35
+
 // Graphing settings
 #define ASYMPTOTE_THRESHOLD (HEIGHT * 2)
 #define LINE_THICKNESS      2.0f

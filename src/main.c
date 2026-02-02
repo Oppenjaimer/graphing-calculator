@@ -65,6 +65,7 @@ int main(int argc, char **argv) {
 
         // Screen space
         draw_grid_labels(&camera, dynamic_spacing);
+        display_coords(&camera);
 
         EndDrawing();
     }
@@ -77,6 +78,5 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-// TODO: add coordinates above cursor
 // TODO: check whether expression is valid after parsing
 // TODO: plot multiple functions at once

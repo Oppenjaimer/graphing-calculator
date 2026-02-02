@@ -1,4 +1,6 @@
 #include <math.h>
+#include <raylib.h>
+#include <raymath.h>
 
 #include "common.h"
 #include "draw.h"
@@ -173,4 +175,18 @@ void plot_function(Camera2D *camera, Node *expression, SymbolTable *symbol_table
         previous_point = current_point;
         has_previous = true;
     }
+}
+
+void display_coords(Camera2D *camera) {
+    // Get mouse position in math units
+    Vector2 mouse_screen = GetMousePosition();
+    Vector2 mouse_world = GetScreenToWorld2D(mouse_screen, *camera);
+    Vector2 mouse_math = {pixels_to_math(mouse_world.x), pixels_to_math(-mouse_world.y)};
+
+    // Compute text size and position
+    const char *text = TextFormat("(%.4f, %.4f)", mouse_math.x, mouse_math.y);
+    int text_width = MeasureText(text, COORDS_DISPLAY_SIZE);
+    Vector2 text_pos = Vector2Add(mouse_screen, (Vector2){-text_width / 2.0f, -COORDS_DISPLAY_OFFSET});
+
+    DrawTextEx(GetFontDefault(), text, text_pos, COORDS_DISPLAY_SIZE, COORDS_DISPLAY_SPACING, COLOR_BRIGHT_WHITE);
 }

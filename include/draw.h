@@ -22,4 +22,9 @@ void draw_grid_labels(Camera2D *camera, float dynamic_spacing);
  */
 void plot_function(Camera2D *camera, Node *expression, SymbolTable *symbol_table);
 
+/**
+ * Display cursor coords in world space.
+ */
+void display_coords(Camera2D *camera);
+
 #endif
