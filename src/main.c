@@ -82,7 +82,7 @@ void translate(Camera2D *camera) {
     // Left click to translate
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         Vector2 delta = GetMouseDelta();
-        delta = Vector2Scale(delta, -DRAG_SENSITIVITY/camera->zoom);
+        delta = Vector2Scale(delta, -DRAG_SENSITIVITY / camera->zoom);
         camera->target = Vector2Add(camera->target, delta);
     }
 }
@@ -100,6 +100,39 @@ void zoom(Camera2D *camera) {
     // Zoom in/out with log scaling
     float scale = ZOOM_SENSITIVITY * wheel;
     camera->zoom = Clamp(expf(logf(camera->zoom) + scale), ZOOM_MIN_LIMIT, ZOOM_MAX_LIMIT);
+}
+
+void handle_shortcuts(Camera2D *camera) {
+    /* -------------------------------- Translate ------------------------------- */
+    Vector2 delta = {0, 0};
+    if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W))    delta.y = 1;  // Arrow up / W
+    if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S))  delta.y = -1; // Arrow down / S
+    if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))  delta.x = 1;  // Arrow left / A
+    if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) delta.x = -1; // Arrow right / D
+
+    delta = Vector2Scale(delta, -DRAG_SHORTCUT_SENSITIVITY / camera->zoom);
+    camera->target = Vector2Add(camera->target, delta);
+
+    /* ---------------------------------- Zoom ---------------------------------- */
+    Vector2 center_screen = {WIDTH / 2, HEIGHT / 2};
+    Vector2 center_world = GetScreenToWorld2D(center_screen, *camera);
+    camera->offset = center_screen;
+    camera->target = center_world;
+
+    float zoom = 0.0f;
+    if (IsKeyDown(KEY_SLASH))         zoom = -1.0f; // -
+    if (IsKeyDown(KEY_RIGHT_BRACKET)) zoom = 1.0f;  // +
+
+    float scale = ZOOM_SHORTCUT_SENSITIVITY * zoom;
+    camera->zoom = Clamp(expf(logf(camera->zoom) + scale), ZOOM_MIN_LIMIT, ZOOM_MAX_LIMIT);
+
+    /* --------------------------------- Reset ---------------------------------- */
+    if (IsKeyPressed(KEY_SPACE)) {
+        camera->zoom = CAMERA_INITIAL_ZOOM;
+        camera->rotation = CAMERA_INITIAL_ROTATION;
+        camera->target = CAMERA_INITIAL_TARGET;
+        camera->offset = CAMERA_OFFSET_CENTER;
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -245,7 +278,7 @@ void plot_function(Camera2D *camera, Node *expression, SymbolTable *symbol_table
 
         // Apply function
         float y_math = (float)env_evaluate(expression, symbol_table);
-        if (isnan(y_math)) {
+        if (isnan(y_math) || isinf(y_math)) {
             has_previous = false;
             continue;
         }
@@ -315,6 +348,7 @@ int main(int argc, char **argv) {
         /* --------------------------------- Update --------------------------------- */
         translate(&camera);
         zoom(&camera);
+        handle_shortcuts(&camera);
 
         // Increase/Decrease adaptive spacing when zooming out/in
         float dynamic_spacing = GRID_INITIAL_SPACING;
@@ -348,4 +382,3 @@ int main(int argc, char **argv) {
 // TODO: add coordinates above cursor
 // TODO: check whether expression is valid after parsing
 // TODO: plot multiple functions at once
-// TODO: add shortcuts (zoom in/out, return to origin)

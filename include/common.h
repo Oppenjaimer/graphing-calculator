@@ -13,12 +13,14 @@
 #define CAMERA_OFFSET_CENTER    (Vector2){WIDTH / 2.0f, HEIGHT / 2.0f}
 
 // Translate config
-#define DRAG_SENSITIVITY 1.0f
+#define DRAG_SENSITIVITY          1.0f
+#define DRAG_SHORTCUT_SENSITIVITY 10.0f
 
 // Zoom config
-#define ZOOM_SENSITIVITY 0.15f
-#define ZOOM_MIN_LIMIT   0.001f
-#define ZOOM_MAX_LIMIT   1000.0f
+#define ZOOM_SENSITIVITY          0.15f
+#define ZOOM_SHORTCUT_SENSITIVITY 0.08f
+#define ZOOM_MIN_LIMIT            0.001f
+#define ZOOM_MAX_LIMIT            1000.0f
 
 // Grid config
 #define GRID_INITIAL_SPACING 50.0f // Pixels
