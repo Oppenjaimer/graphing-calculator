@@ -97,5 +97,3 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-
-// TODO: fix 1/x not plotting right half after refactor

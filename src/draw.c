@@ -167,9 +167,9 @@ void plot_function(Camera2D *camera, Node *expression, SymbolTable *symbol_table
         Vector2 current_point = {x_world, y_world};
 
         if (has_previous) {
-            // Connect previous and current point, skip if asymptote
-            if (fabsf(current_point.y - previous_point.y) >= ASYMPTOTE_THRESHOLD) continue;
-            DrawLineEx(previous_point, current_point, LINE_THICKNESS / camera->zoom, color);
+            // Connect previous and current point unless an asymptote is present
+            if (fabsf(current_point.y - previous_point.y) < ASYMPTOTE_THRESHOLD)
+                DrawLineEx(previous_point, current_point, LINE_THICKNESS / camera->zoom, color);
         }
 
         previous_point = current_point;
