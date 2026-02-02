@@ -140,7 +140,7 @@ void draw_grid_labels(Camera2D *camera, float dynamic_spacing) {
     }
 }
 
-void plot_function(Camera2D *camera, Node *expression, SymbolTable *symbol_table) {
+void plot_function(Camera2D *camera, Node *expression, SymbolTable *symbol_table, Color color) {
     ViewContext ctx = get_view_context(camera);
 
     // Get sampling pixel step
@@ -169,7 +169,7 @@ void plot_function(Camera2D *camera, Node *expression, SymbolTable *symbol_table
         if (has_previous) {
             // Connect previous and current point, skip if asymptote
             if (fabsf(current_point.y - previous_point.y) >= ASYMPTOTE_THRESHOLD) continue;
-            DrawLineEx(previous_point, current_point, LINE_THICKNESS / camera->zoom, COLOR_GREEN);
+            DrawLineEx(previous_point, current_point, LINE_THICKNESS / camera->zoom, color);
         }
 
         previous_point = current_point;

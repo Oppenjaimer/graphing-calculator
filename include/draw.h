@@ -18,9 +18,9 @@ void draw_grid(Camera2D *camera, float dynamic_spacing);
 void draw_grid_labels(Camera2D *camera, float dynamic_spacing);
 
 /**
- * Evaluate function expression through symbol table and plot the result.
+ * Evaluate function expression through symbol table and plot the result using the given color.
  */
-void plot_function(Camera2D *camera, Node *expression, SymbolTable *symbol_table);
+void plot_function(Camera2D *camera, Node *expression, SymbolTable *symbol_table, Color color);
 
 /**
  * Display cursor coords in world space.

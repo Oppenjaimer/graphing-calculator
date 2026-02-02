@@ -1,14 +1,21 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "common.h"
 #include "config.h"
 #include "draw.h"
 #include "update.h"
 
+// Helper to hold parsed expressions and their plot color
+typedef struct {
+    Node *root;
+    Color color;
+} ParsedExpression;
+
 int main(int argc, char **argv) {
     // Check number of args
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s EXPRESSION\n", argv[0]);
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s EXPRESSION [EXPRESSION...]\n", argv[0]);
         return 1;
     }
 
@@ -17,9 +24,16 @@ int main(int argc, char **argv) {
     SymbolTable symbol_table = symbol_table_init();
     symbol_table_set(&symbol_table, "x", 1, 0.0);
 
-    // Parse expression
-    Node *root = parser_parse(&parser, argv[1]);
-    if (root == NULL) return 1;
+    // Allocate array of parsed expressions and color pool
+    ParsedExpression *parsed = malloc(sizeof(ParsedExpression) * (argc - 1));
+    Color colors[] = {COLOR_BLUE, COLOR_CYAN, COLOR_GREEN, COLOR_RED, COLOR_YELLOW, COLOR_PURPLE};
+
+    // Store parsed expressions
+    for (int i = 1; i < argc; i++) {
+        Node *root = parser_parse(&parser, argv[i]);
+        Color color = colors[(i - 1) % (sizeof(colors) / sizeof(Color))];
+        parsed[i - 1] = (ParsedExpression){root, color};
+    }
 
     // Initialization
     SetTraceLogCallback(custom_trace_log);
@@ -60,7 +74,12 @@ int main(int argc, char **argv) {
         // World space
         BeginMode2D(camera);
         draw_grid(&camera, dynamic_spacing);
-        plot_function(&camera, root, &symbol_table);
+
+        for (int i = 0; i < argc - 1; i++) {
+            if (parsed[i].root == NULL) continue;
+            plot_function(&camera, parsed[i].root, &symbol_table, parsed[i].color);
+        }
+
         EndMode2D();
 
         // Screen space
@@ -74,9 +93,9 @@ int main(int argc, char **argv) {
     CloseWindow();
     symbol_table_free(&symbol_table);
     parser_free(&parser);
+    free(parsed);
 
     return 0;
 }
 
-// TODO: check whether expression is valid after parsing
-// TODO: plot multiple functions at once
+// TODO: fix 1/x not plotting right half after refactor
