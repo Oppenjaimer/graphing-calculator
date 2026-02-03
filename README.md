@@ -15,8 +15,8 @@ The project uses a `Makefile` and requires `gcc` to compile, as well as [raylib]
 
 To generate the executable binary, there are two options.
 
-* **Release mode**: Use **make** to build with maximum optimization.
-* **Debug mode**: Use **make DEBUG=1** to build with debug symbols and no optimizations.
+* **Release mode**: Use `make` to build with maximum optimization.
+* **Debug mode**: Use `make DEBUG=1` to build with debug symbols and no optimizations.
 
 This will output `bin/mode/plot`, where `mode` is either `release` or `debug`. Object files are placed in `build/mode`.
 
