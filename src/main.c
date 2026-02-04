@@ -4,13 +4,8 @@
 #include "common.h"
 #include "config.h"
 #include "draw.h"
+#include "gui.h"
 #include "update.h"
-
-// Helper to hold parsed expressions and their plot color
-typedef struct {
-    Node *root;
-    Color color;
-} ParsedExpression;
 
 int main(int argc, char **argv) {
     // Check number of args
@@ -32,7 +27,7 @@ int main(int argc, char **argv) {
     for (int i = 1; i < argc; i++) {
         Node *root = parser_parse(&parser, argv[i]);
         Color color = colors[(i - 1) % (sizeof(colors) / sizeof(Color))];
-        parsed[i - 1] = (ParsedExpression){root, color};
+        parsed[i - 1] = (ParsedExpression){argv[i], root, color};
     }
 
     // Initialization
@@ -84,6 +79,7 @@ int main(int argc, char **argv) {
 
         // Screen space
         draw_grid_labels(&camera, dynamic_spacing);
+        display_legend(parsed, argc - 1);
         display_coords(&camera);
 
         EndDrawing();

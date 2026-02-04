@@ -47,6 +47,11 @@
 #define ASYMPTOTE_THRESHOLD (HEIGHT * 2)
 #define LINE_THICKNESS      2.0f
 
+// Legend settings
+#define LEGEND_SPACING   15
+#define LEGEND_OPACITY   102 // 40%
+#define LEGEND_ELEM_SIZE 20
+
 // Colors (Gruvbox Dark)
 #define COLOR_BRIGHT_BLACK  (Color){146, 131, 116, 255}
 #define COLOR_BRIGHT_BLUE   (Color){131, 165, 152, 255}
