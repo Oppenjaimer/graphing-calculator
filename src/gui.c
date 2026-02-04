@@ -26,8 +26,10 @@ bool display_legend(ParsedExpression *expressions, int count) {
     Rectangle box = {LEGEND_SPACING, LEGEND_SPACING, width, height};
     DrawRectangleRec(box, color);
 
+    Vector2 mouse_pos = GetMousePosition();
+
     // Change cursor on legend box hover
-    if (CheckCollisionPointRec(GetMousePosition(), box)) SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+    if (CheckCollisionPointRec(mouse_pos, box)) SetMouseCursor(MOUSE_CURSOR_DEFAULT);
     else SetMouseCursor(MOUSE_CURSOR_CROSSHAIR);
 
     // Draw legend entries
@@ -42,7 +44,7 @@ bool display_legend(ParsedExpression *expressions, int count) {
 
         // Check for click on color square
         Rectangle toggle = {color_x, y, LEGEND_ELEM_SIZE, LEGEND_ELEM_SIZE};
-        if (CheckCollisionPointRec(GetMousePosition(), toggle)) {
+        if (CheckCollisionPointRec(mouse_pos, toggle)) {
             // Toggle visibility
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
                 expressions[i].visible = !expressions[i].visible;
@@ -55,5 +57,5 @@ bool display_legend(ParsedExpression *expressions, int count) {
         non_null_i++;
     }
 
-    return CheckCollisionPointRec(GetMousePosition(), box);
+    return CheckCollisionPointRec(mouse_pos, box);
 }

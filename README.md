@@ -8,6 +8,7 @@ An interactive 2D graphing calculator built in C using raylib. Expressions are p
 * **Panning** and **zooming** with the mouse or keyboard shortcuts.
 * **Cursor coordinate tracking** for more precise data reading.
 * Plot **multiple functions** simultaneously with different colors.
+* **Legend** which allows toggling the visibility of specific functions.
 
 ## Building
 
@@ -27,6 +28,8 @@ Run the executable followed by the mathematical expressions to graph as quoted s
 ```bash
 ./plot "arctan(x)" "x^3" "1.5"
 ```
+
+Click on the colored square of any legend entry to toggle the visibility of the associated function.
 
 ## License
 
