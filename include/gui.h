@@ -10,11 +10,13 @@ typedef struct {
     const char *text;
     Node *root;
     Color color;
+    bool visible;
 } ParsedExpression;
 
 /**
  * Display legend of plotted functions.
+ * Returns whether the cursor is hovering over the legend box.
  */
-void display_legend(ParsedExpression *expressions, int count);
+bool display_legend(ParsedExpression *expressions, int count);
 
 #endif

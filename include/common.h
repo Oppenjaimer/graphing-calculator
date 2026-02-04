@@ -48,9 +48,10 @@
 #define LINE_THICKNESS      2.0f
 
 // Legend settings
-#define LEGEND_SPACING   15
-#define LEGEND_OPACITY   102 // 40%
-#define LEGEND_ELEM_SIZE 20
+#define LEGEND_SPACING        15
+#define LEGEND_OPACITY        102 // 40%
+#define LEGEND_ELEM_SIZE      20
+#define LEGEND_RECT_THICKNESS 2
 
 // Colors (Gruvbox Dark)
 #define COLOR_BRIGHT_BLACK  (Color){146, 131, 116, 255}

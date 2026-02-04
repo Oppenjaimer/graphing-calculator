@@ -27,14 +27,13 @@ int main(int argc, char **argv) {
     for (int i = 1; i < argc; i++) {
         Node *root = parser_parse(&parser, argv[i]);
         Color color = colors[(i - 1) % (sizeof(colors) / sizeof(Color))];
-        parsed[i - 1] = (ParsedExpression){argv[i], root, color};
+        parsed[i - 1] = (ParsedExpression){argv[i], root, color, true};
     }
 
     // Initialization
     SetTraceLogCallback(custom_trace_log);
     InitWindow(WIDTH, HEIGHT, "Graphing Calculator");
     SetTargetFPS(FPS);
-    SetMouseCursor(MOUSE_CURSOR_CROSSHAIR);
 
     // Set resources directory and app icon
     char *resource_dir = "resources";
@@ -72,15 +71,16 @@ int main(int argc, char **argv) {
 
         for (int i = 0; i < argc - 1; i++) {
             if (parsed[i].root == NULL) continue;
-            plot_function(&camera, parsed[i].root, &symbol_table, parsed[i].color);
+            if (parsed[i].visible) plot_function(&camera, parsed[i].root, &symbol_table, parsed[i].color);
         }
 
         EndMode2D();
 
         // Screen space
         draw_grid_labels(&camera, dynamic_spacing);
-        display_legend(parsed, argc - 1);
-        display_coords(&camera);
+
+        bool hovering = display_legend(parsed, argc - 1);
+        display_coords(&camera, hovering);
 
         EndDrawing();
     }

@@ -25,6 +25,6 @@ void plot_function(Camera2D *camera, Node *expression, SymbolTable *symbol_table
 /**
  * Display cursor coords in world space.
  */
-void display_coords(Camera2D *camera);
+void display_coords(Camera2D *camera, bool over_legend);
 
 #endif

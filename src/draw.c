@@ -177,7 +177,10 @@ void plot_function(Camera2D *camera, Node *expression, SymbolTable *symbol_table
     }
 }
 
-void display_coords(Camera2D *camera) {
+void display_coords(Camera2D *camera, bool over_legend) {
+    // Skip if hovering over legend box
+    if (over_legend) return;
+
     // Get mouse position in math units
     Vector2 mouse_screen = GetMousePosition();
     Vector2 mouse_world = GetScreenToWorld2D(mouse_screen, *camera);
