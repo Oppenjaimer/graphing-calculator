@@ -5,7 +5,7 @@
 namespace config {
     // Application
     constexpr int fps = 60;
-    constexpr const char* title = "Raylib Template";
+    constexpr const char* title = "Graphing Calculator";
 
     // Screen
     constexpr int screen_width = 1280;

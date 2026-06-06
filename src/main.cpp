@@ -1,5 +1,6 @@
 #include "raylib.h"
 
+#include "camera.hpp"
 #include "config.hpp"
 
 bool set_resource_dir(const char* path) {
@@ -52,15 +53,25 @@ int main() {
         TraceLog(LOG_WARNING, "Unable to set resources directory");
     }
 
-    while (!WindowShouldClose()) {
-        // Logic
-        // ...
+    InteractiveCamera camera;
 
+    while (!WindowShouldClose()) {
+        float dt = GetFrameTime();
+
+        // Update
+        camera.update(dt);
+
+        // Draw
         BeginDrawing();
         ClearBackground(theme::bg0);
 
-        // Draw
-        DrawText("Hello there!", 50, 50, 30, theme::fg0);
+        // World space
+        camera.begin();
+        DrawCircle(0, 0, 10, theme::green);
+        camera.end();
+
+        // Screen space
+        // ...
 
         EndDrawing();
     }
