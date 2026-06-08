@@ -36,6 +36,7 @@ void App::update(float dt) {
     state.running = !WindowShouldClose();
 
     camera.update(dt);
+    grid.update(camera.get_camera());
 }
 
 void App::draw() const {
@@ -44,11 +45,11 @@ void App::draw() const {
 
     // World space
     camera.begin();
-    grid.draw(camera.get_camera());
+    grid.draw_grid(camera.get_camera());
     camera.end();
 
     // Screen space
-    // ...
+    grid.draw_labels(camera.get_camera());
 
     EndDrawing();
 }

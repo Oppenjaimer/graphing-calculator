@@ -6,17 +6,17 @@ struct CameraConfig {
     // Defaults
     Vector2 initial_target = {0.0f, 0.0f};
     float initial_rotation = 0.0f;
-    float initial_zoom = 1.0f;
+    float initial_zoom = 20.0f;
 
     // Sensitivities & speeds
     float pan_sensitivity_mouse = 1.0f;
-    float pan_speed_keyboard = 400.0f;
+    float pan_speed_keyboard = 1600.0f;
     float zoom_sensitivity_mouse = 0.15f;
     float zoom_speed_keyboard = 4.0f;
 
     // Limits
-    float zoom_min = 0.01f;
-    float zoom_max = 100.0f;
+    float zoom_min = 0.02f;
+    float zoom_max = 500000.0f;
 
     // Keymap
     int key_reset = KEY_SPACE;
