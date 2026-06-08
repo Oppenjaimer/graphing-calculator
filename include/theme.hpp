@@ -12,11 +12,11 @@ namespace theme {
     inline const Color bg4 = {124, 111, 100, 255};
 
     // Foreground
-    inline const Color fg4 = {168, 153, 132, 255};
-    inline const Color fg3 = {189, 174, 147, 255};
-    inline const Color fg2 = {213, 196, 161, 255};
-    inline const Color fg1 = {235, 219, 178, 255};
     inline const Color fg0 = {251, 241, 199, 255};
+    inline const Color fg1 = {235, 219, 178, 255};
+    inline const Color fg2 = {213, 196, 161, 255};
+    inline const Color fg3 = {189, 174, 147, 255};
+    inline const Color fg4 = {168, 153, 132, 255};
 
     // Normal colors
     inline const Color red = {204, 36, 29, 255};

@@ -30,7 +30,8 @@ struct CameraConfig {
 
 class InteractiveCamera {
 public:
-    explicit InteractiveCamera(const CameraConfig& config = CameraConfig());
+    explicit InteractiveCamera(const CameraConfig& config = CameraConfig())
+        : config(config) { reset(); }
 
     void reset();
     void update(float dt, bool has_focus = true);

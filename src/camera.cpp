@@ -4,10 +4,6 @@
 #include <algorithm>
 #include <cmath>
 
-InteractiveCamera::InteractiveCamera(const CameraConfig& config) : config(config) {
-    reset();
-}
-
 void InteractiveCamera::reset() {
     camera.target = config.initial_target;
     camera.rotation = config.initial_rotation;

@@ -1,7 +1,6 @@
 #include "raylib.h"
 
 #include "app.hpp"
-#include "theme.hpp"
 
 App::App(const AppConfig& config) : config(config) {
     // Initialize raylib
@@ -9,7 +8,6 @@ App::App(const AppConfig& config) : config(config) {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
     InitWindow(config.screen_width, config.screen_height, config.title);
     SetTargetFPS(config.fps);
-    SetExitKey(0);
 
     // Set resources directory and app icon
     bool found = set_resource_dir("resources");
@@ -42,11 +40,11 @@ void App::update(float dt) {
 
 void App::draw() const {
     BeginDrawing();
-    ClearBackground(theme::bg0);
+    ClearBackground(config.bg_color);
 
     // World space
     camera.begin();
-    DrawCircle(0, 0, 10, theme::green);
+    grid.draw(camera.get_camera());
     camera.end();
 
     // Screen space
