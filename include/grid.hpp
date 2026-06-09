@@ -12,7 +12,7 @@ struct GridConfig {
     float minor_thickness = 0.5f;
     float label_padding = 10.0f;
     int label_size = 20;
-    int subdivisions = 10;
+    int subdivisions = 5;
 
     // Colors
     Color axis_color = theme::fg0;

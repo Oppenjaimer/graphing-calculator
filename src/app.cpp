@@ -24,8 +24,18 @@ App::~App() {
     CloseWindow();
 }
 
-void App::run() {
-    while (state.running) {
+void App::run(int argc, char** argv) {
+    // Parse expressions from arguments
+    for (int i = 1; i < argc; i++) {
+        if (!plotter.parse(argv[i])) {
+            // TODO: support invalid expressions appearing in legend with a warning and being editable
+            TraceLog(LOG_WARNING, "Invalid expression: '%s'", argv[i]);
+        }
+    }
+
+    // TODO: create GUI for adding, removing, toggling and editing plotted functions
+
+    while (running) {
         float dt = GetFrameTime();
         update(dt);
         draw();
@@ -33,23 +43,26 @@ void App::run() {
 }
 
 void App::update(float dt) {
-    state.running = !WindowShouldClose();
+    running = !WindowShouldClose();
 
     camera.update(dt);
     grid.update(camera.get_camera());
 }
 
-void App::draw() const {
+void App::draw() {
+    Camera2D cam = camera.get_camera();
+
     BeginDrawing();
     ClearBackground(config.bg_color);
 
     // World space
     camera.begin();
-    grid.draw_grid(camera.get_camera());
+    grid.draw_grid(cam);
+    plotter.plot(cam);
     camera.end();
 
     // Screen space
-    grid.draw_labels(camera.get_camera());
+    grid.draw_labels(cam);
 
     EndDrawing();
 }

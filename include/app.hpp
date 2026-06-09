@@ -2,6 +2,7 @@
 
 #include "camera.hpp"
 #include "grid.hpp"
+#include "plotter.hpp"
 
 struct AppConfig {
     // Window
@@ -14,25 +15,24 @@ struct AppConfig {
     Color bg_color = theme::bg0;
 };
 
-struct AppState {
-    bool running = true;
-};
-
 class App {
 public:
     explicit App(const AppConfig& config = AppConfig());
     ~App();
 
-    void run();
+    void run(int argc, char** argv);
 
 private:
     AppConfig config{};
-    AppState state{};
+
     InteractiveCamera camera{};
     AdaptiveGrid grid{};
+    Plotter plotter{};
+
+    bool running = true;
 
     void update(float dt);
-    void draw() const;
+    void draw();
 
     bool set_resource_dir(const char* path);
 };
