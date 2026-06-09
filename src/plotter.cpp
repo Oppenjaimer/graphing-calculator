@@ -44,11 +44,32 @@ void Plotter::plot(const Camera2D& camera) {
             Vector2 current_point = {static_cast<float>(x), static_cast<float>(-y)};
 
             if (has_previous) {
-                // Avoid asymptotes
-                if (std::abs(current_point.y - previous_point.y) >= asymptote_threshold)
-                    has_previous = false;
-                else
+                float y_diff = std::abs(current_point.y - previous_point.y);
+
+                if (y_diff < asymptote_threshold) {
+                    // Normal continuous line
                     DrawLineEx(previous_point, current_point, thickness, expr.color);
+                } else {
+                    // Distinguish between steep line and asymptote by checking midpoint
+                    double mid_x = (previous_point.x + x) / 2.0;
+                    this->x = mid_x;
+                    double mid_y = expr.parser.evaluate();
+
+                    // Check if midpoint has a singularity
+                    if (std::isnan(mid_y) || std::isinf(mid_y)) {
+                        has_previous = false;
+                        continue;
+                    }
+
+                    float mid_y_actual = static_cast<float>(-mid_y);
+                    float mid_y_expected = (previous_point.y + current_point.y) / 2.0f;
+
+                    // If midpoint is close to the expected value, draw the line
+                    if (std::abs(mid_y_actual - mid_y_expected) < asymptote_threshold)
+                        DrawLineEx(previous_point, current_point, thickness, expr.color);
+                    else
+                        has_previous = false;
+                }
             }
 
             previous_point = current_point;
