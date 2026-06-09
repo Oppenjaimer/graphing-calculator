@@ -12,6 +12,7 @@
 struct ParsedExpression {
     te_parser parser;
     Color color;
+    bool visible;
 };
 
 struct PlotterConfig {
@@ -25,6 +26,8 @@ public:
 
     bool parse(std::string_view expression);
     void plot(const Camera2D& camera);
+
+    std::vector<ParsedExpression>& get_expressions() { return parsed_expressions; }
 
 private:
     PlotterConfig config{};

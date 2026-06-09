@@ -53,7 +53,6 @@ void App::update(float dt) {
 
     camera.update(dt, !gui_focus);
     grid.update(camera.get_camera());
-    gui.update();
 }
 
 void App::draw() {
@@ -73,7 +72,7 @@ void App::draw() {
 
     // GUI
     rlImGuiBegin();
-    gui.draw();
+    gui.render();
     rlImGuiEnd();
 
     EndDrawing();

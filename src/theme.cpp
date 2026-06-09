@@ -1,8 +1,6 @@
-#include "imgui.h"
-
 #include "theme.hpp"
 
-static ImVec4 to_imvec(const Color& c) {
+ImVec4 theme::to_imvec(const Color& c) {
     return ImVec4(c.r / 255.0f, c.g / 255.0f, c.b / 255.0f, c.a / 255.0f);
 }
 

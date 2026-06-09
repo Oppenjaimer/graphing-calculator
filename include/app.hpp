@@ -29,7 +29,7 @@ private:
     InteractiveCamera camera{};
     AdaptiveGrid grid{};
     Plotter plotter{};
-    GUI gui{};
+    GUI gui{plotter};
 
     bool running = true;
 

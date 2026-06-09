@@ -1,5 +1,7 @@
 #pragma once
 
+#include "plotter.hpp"
+
 struct GUIConfig {
     int legend_x = 10;
     int legend_y = 10;
@@ -7,11 +9,12 @@ struct GUIConfig {
 
 class GUI {
 public:
-    explicit GUI(const GUIConfig& config = GUIConfig());
+    explicit GUI(Plotter& plotter, const GUIConfig& config = GUIConfig());
 
-    void update();
-    void draw() const;
+    void render();
 
 private:
     GUIConfig config{};
+
+    Plotter& plotter;
 };

@@ -8,7 +8,7 @@ bool Plotter::parse(std::string_view expression) {
 
     if (parser.compile(expression)) {
         Color color = colors[parsed_expressions.size() % colors.size()];
-        parsed_expressions.push_back({std::move(parser), color});
+        parsed_expressions.push_back({std::move(parser), color, true});
 
         return true;
     }
@@ -28,6 +28,8 @@ void Plotter::plot(const Camera2D& camera) {
     float asymptote_threshold = screen_height / camera.zoom;
 
     for (auto& expr : parsed_expressions) {
+        if (!expr.visible) continue;
+
         bool has_previous = false;
         Vector2 previous_point = {0.0f, 0.0f};
 

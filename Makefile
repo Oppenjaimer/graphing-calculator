@@ -14,7 +14,8 @@ RLIMGUI_DIR = $(EXT_DIR)/rlimgui
 TINYEXPR_DIR = $(EXT_DIR)/tinyexpr
 
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -pedantic -I$(INC_DIR) -I$(IMGUI_DIR) -I$(RLIMGUI_DIR) -I$(TINYEXPR_DIR)
+CXXFLAGS = -std=c++20 -Wall -Wextra -pedantic -I$(INC_DIR) \
+		   -isystem$(IMGUI_DIR) -isystem$(RLIMGUI_DIR) -isystem$(TINYEXPR_DIR)
 LDFLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
@@ -37,7 +38,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 
 $(BUILD_DIR)/$(EXT_DIR)/%.o: $(EXT_DIR)/%.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -w -c $< -o $@
 
 $(BUILD_DIR) $(BIN_DIR):
 	@mkdir -p $@
