@@ -1,3 +1,5 @@
 -Iinclude
--Iexternal
+-Iexternal/imgui
+-Iexternal/rlimgui
+-Iexternal/tinyexpr
 -std=c++20
