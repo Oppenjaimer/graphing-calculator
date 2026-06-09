@@ -1,3 +1,7 @@
+
+
+# =================================================================
+
 SRC_DIR = src
 INC_DIR = include
 EXT_DIR = external
@@ -13,12 +17,12 @@ CXX = g++
 CXXFLAGS = -std=c++20 -Wall -Wextra -pedantic -I$(INC_DIR) -I$(IMGUI_DIR) -I$(RLIMGUI_DIR) -I$(TINYEXPR_DIR)
 LDFLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
+SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC_FILES))
+
 EXT_SRC_FILES = $(wildcard $(IMGUI_DIR)/*.cpp) \
                 $(wildcard $(RLIMGUI_DIR)/*.cpp) \
                 $(wildcard $(TINYEXPR_DIR)/*.cpp)
-EXT_OBJ_FILES = $(patsubst $(EXT_DIR)/%.cpp, $(BUILD_DIR)/$(EXT_DIR)/%.o, $(EXT_SRC_FILES))
-
-EXT_SRC_FILES = $(wildcard $(EXT_DIR)/*.cpp)
 EXT_OBJ_FILES = $(patsubst $(EXT_DIR)/%.cpp, $(BUILD_DIR)/$(EXT_DIR)/%.o, $(EXT_SRC_FILES))
 
 ALL_OBJ_FILES = $(OBJ_FILES) $(EXT_OBJ_FILES)

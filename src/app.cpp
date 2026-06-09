@@ -1,3 +1,5 @@
+#include "imgui.h"
+#include "rlImGui.h"
 #include "raylib.h"
 
 #include "app.hpp"
@@ -21,6 +23,7 @@ App::App(const AppConfig& config) : config(config) {
 }
 
 App::~App() {
+    rlImGuiShutdown();
     CloseWindow();
 }
 
@@ -45,8 +48,12 @@ void App::run(int argc, char** argv) {
 void App::update(float dt) {
     running = !WindowShouldClose();
 
-    camera.update(dt);
+    ImGuiIO& io = ImGui::GetIO();
+    bool gui_focus = io.WantCaptureMouse || io.WantCaptureKeyboard;
+
+    camera.update(dt, !gui_focus);
     grid.update(camera.get_camera());
+    gui.update();
 }
 
 void App::draw() {
@@ -63,6 +70,11 @@ void App::draw() {
 
     // Screen space
     grid.draw_labels(cam);
+
+    // GUI
+    rlImGuiBegin();
+    gui.draw();
+    rlImGuiEnd();
 
     EndDrawing();
 }

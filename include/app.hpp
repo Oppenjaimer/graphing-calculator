@@ -3,6 +3,7 @@
 #include "camera.hpp"
 #include "grid.hpp"
 #include "plotter.hpp"
+#include "gui.hpp"
 
 struct AppConfig {
     // Window
@@ -28,6 +29,7 @@ private:
     InteractiveCamera camera{};
     AdaptiveGrid grid{};
     Plotter plotter{};
+    GUI gui{};
 
     bool running = true;
 

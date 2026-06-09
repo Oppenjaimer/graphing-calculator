@@ -37,4 +37,6 @@ namespace theme {
     inline const Color bright_aqua = {142, 192, 124, 255};
     inline const Color bright_orange = {254, 128, 25, 255};
     inline const Color bright_gray = {168, 153, 132, 255};
+
+    void apply();
 }
