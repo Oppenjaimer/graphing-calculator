@@ -36,8 +36,6 @@ void App::run(int argc, char** argv) {
         }
     }
 
-    // TODO: create GUI for adding, removing, toggling and editing plotted functions
-
     while (running) {
         float dt = GetFrameTime();
         update(dt);
@@ -48,7 +46,7 @@ void App::run(int argc, char** argv) {
 void App::update(float dt) {
     running = !WindowShouldClose();
 
-    ImGuiIO& io = ImGui::GetIO();
+    io = ImGui::GetIO();
     bool gui_focus = io.WantCaptureMouse || io.WantCaptureKeyboard;
 
     camera.update(dt, !gui_focus);
@@ -69,6 +67,7 @@ void App::draw() {
 
     // Screen space
     grid.draw_labels(cam);
+    gui.display_coords(cam, io.WantCaptureMouse);
 
     // GUI
     rlImGuiBegin();

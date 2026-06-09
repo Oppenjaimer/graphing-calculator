@@ -31,6 +31,8 @@ private:
     Plotter plotter{};
     GUI gui{plotter};
 
+    ImGuiIO io{};
+
     bool running = true;
 
     void update(float dt);

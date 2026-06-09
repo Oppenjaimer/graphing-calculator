@@ -1,7 +1,9 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "misc/cpp/imgui_stdlib.h"
 #include "rlImGui.h"
+#include "raymath.h"
 
 #include "gui.hpp"
 #include "theme.hpp"
@@ -77,16 +79,72 @@ GUI::GUI(Plotter& plotter, const GUIConfig& config) : config(config), plotter(pl
 }
 
 void GUI::render() {
-    ImGui::Begin("Legend", NULL, ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::SetWindowPos(ImVec2(config.legend_x, config.legend_y), ImGuiCond_FirstUseEver);
+    ImGui::Begin("##panel", NULL, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::SetWindowPos(ImVec2(config.panel_x, config.panel_y), ImGuiCond_FirstUseEver);
 
-    for (auto& entry : plotter.get_expressions()) {
-        // Solid checkbox with visibility toggle
-        ImGui::PushStyleColor(ImGuiCol_CheckMark, theme::to_imvec(entry.color));
-        ImGui::SolidCheckbox(entry.parser.get_expression().c_str(), &entry.visible);
-        if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-        ImGui::PopStyleColor();
+    // Input expression
+    bool submitted = false;
+    if (ImGui::InputTextWithHint("##input", "Input expression", &input_str, ImGuiInputTextFlags_EnterReturnsTrue))
+        submitted = true;
+
+    ImGui::SameLine();
+    if (ImGui::Button("Add"))
+        submitted = true;
+
+    if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+
+    // Add expression to plotter and clear input
+    if (submitted) {
+        if (!input_str.empty()) plotter.parse(input_str);
+        input_str.clear();
+    }
+
+    // Separator
+    ImGui::InvisibleButton("invisible_separator", ImVec2(1, config.legend_spacing_top));
+
+    if (ImGui::BeginTable("legend_table", 3, ImGuiTableFlags_SizingFixedFit)) {
+        int id_counter = 0;
+
+        for (auto& entry : plotter.get_expressions()) {
+            // Unique ID for current entry
+            ImGui::PushID(id_counter++);
+            ImGui::TableNextRow();
+
+            // Column 1: Solid checkbox with visibility toggle
+            ImGui::TableNextColumn();
+            ImGui::PushStyleColor(ImGuiCol_CheckMark, theme::to_imvec(entry.color));
+            ImGui::SolidCheckbox(entry.parser.get_expression().c_str(), &entry.visible);
+            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+            ImGui::PopStyleColor();
+
+            // Column 2: Edit button
+            ImGui::TableNextColumn();
+            ImGui::Button("Edit");
+            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+
+            // Column 3: Remove button
+            ImGui::TableNextColumn();
+            ImGui::Button("Remove");
+            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+
+            ImGui::PopID();
+        }
+
+        ImGui::EndTable();
     }
 
     ImGui::End();
+}
+
+void GUI::display_coords(const Camera2D& camera, bool over_panel) {
+    if (over_panel) return;
+
+    Vector2 mouse_screen = GetMousePosition();
+    Vector2 mouse_world = GetScreenToWorld2D(mouse_screen, camera);
+
+    const char* text = TextFormat("(%.4f, %.4f)", mouse_world.x, mouse_world.y);
+    int text_width = MeasureText(text, config.coords_size);
+    Vector2 text_pos = Vector2Add(mouse_screen, {-text_width / 2.0f, -config.coords_offset});
+
+    DrawText(text, text_pos.x, text_pos.y, config.coords_size, config.coords_color);
 }

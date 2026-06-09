@@ -1,7 +1,3 @@
-
-
-# =================================================================
-
 SRC_DIR = src
 INC_DIR = include
 EXT_DIR = external
@@ -23,7 +19,8 @@ OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC_FILES))
 
 EXT_SRC_FILES = $(wildcard $(IMGUI_DIR)/*.cpp) \
                 $(wildcard $(RLIMGUI_DIR)/*.cpp) \
-                $(wildcard $(TINYEXPR_DIR)/*.cpp)
+                $(wildcard $(TINYEXPR_DIR)/*.cpp) \
+                $(IMGUI_DIR)/misc/cpp/imgui_stdlib.cpp
 EXT_OBJ_FILES = $(patsubst $(EXT_DIR)/%.cpp, $(BUILD_DIR)/$(EXT_DIR)/%.o, $(EXT_SRC_FILES))
 
 ALL_OBJ_FILES = $(OBJ_FILES) $(EXT_OBJ_FILES)
