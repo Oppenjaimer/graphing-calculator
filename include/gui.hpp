@@ -7,6 +7,7 @@ struct GUIConfig {
     int panel_x = 10;
     int panel_y = 10;
     int legend_spacing_top = 5;
+    size_t legend_label_length = 30;
 
     // Cursor coordinates
     int coords_size = 20;

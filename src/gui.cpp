@@ -9,7 +9,7 @@
 #include "theme.hpp"
 
 namespace ImGui {
-    bool SolidCheckbox(const char* label, bool* v) {
+    bool SolidCheckbox(const char* label, bool* v, bool valid, ImVec4 color) {
         ImGuiWindow* window = GetCurrentWindow();
         if (window->SkipItems) return false;
 
@@ -32,9 +32,12 @@ namespace ImGui {
         // Handle interactions
         bool hovered, held;
         bool pressed = ButtonBehavior(total_bb, id, &hovered, &held);
-        if (pressed) {
+        bool value_changed = false;
+
+        if (pressed && valid) {
             *v = !(*v);
             MarkItemEdited(id);
+            value_changed = true;
         }
 
         // Check bounding box
@@ -43,19 +46,34 @@ namespace ImGui {
         RenderNavHighlight(total_bb, id);
 
         // Empty background frame
-        RenderFrame(
-            check_bb.Min, check_bb.Max,
-            GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg),
-            true, style.FrameRounding
+        ImU32 frame_color = GetColorU32(
+            (!valid) ? ImGuiCol_FrameBg :
+            (held && hovered) ? ImGuiCol_FrameBgActive :
+            hovered ? ImGuiCol_FrameBgHovered :
+            ImGuiCol_FrameBg
         );
 
+        RenderFrame(check_bb.Min, check_bb.Max, frame_color, true, style.FrameRounding);
+
         // Filled inner square if checked
-        if (*v) {
-            window->DrawList->AddRectFilled(
-                check_bb.Min, check_bb.Max,
-                GetColorU32(ImGuiCol_CheckMark),
-                style.FrameRounding
+        if (*v)
+            window->DrawList->AddRectFilled(check_bb.Min, check_bb.Max, ImGui::ColorConvertFloat4ToU32(color), style.FrameRounding);
+
+        // Invalid indicator (!)
+        if (!valid) {
+            const char* mark_text = "!";
+
+            ImFont* font = ImGui::GetFont();
+            float font_size = g.FontSize * 1.5f;
+
+            ImVec2 mark_size = font->CalcTextSizeA(font_size, FLT_MAX, 0.0f, mark_text);
+            ImVec2 mark_pos = ImVec2(
+                check_bb.Min.x + (side - mark_size.x) / 2.0f,
+                check_bb.Min.y + (side - mark_size.y) / 2.0f
             );
+
+            ImU32 color = ImGui::ColorConvertFloat4ToU32(theme::to_imvec(theme::bright_red));
+            window->DrawList->AddText(font, font_size, mark_pos, color, mark_text);
         }
 
         // Label text
@@ -64,7 +82,7 @@ namespace ImGui {
             RenderText(label_pos, label);
         }
 
-        return pressed;
+        return value_changed;
     }
 }
 
@@ -82,9 +100,14 @@ void GUI::render() {
     ImGui::Begin("##panel", NULL, ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::SetWindowPos(ImVec2(config.panel_x, config.panel_y), ImGuiCond_FirstUseEver);
 
+    // Compute input width
+    float button_width = ImGui::CalcTextSize("Add").x + ImGui::GetStyle().FramePadding.x * 2.0f;
+    float input_width = ImGui::GetContentRegionAvail().x - button_width - ImGui::GetStyle().ItemSpacing.x;
+    ImGui::SetNextItemWidth(input_width);
+
     // Input expression
     bool submitted = false;
-    if (ImGui::InputTextWithHint("##input", "Input expression", &input_str, ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputTextWithHint("##input", "Expression...", &input_str, ImGuiInputTextFlags_EnterReturnsTrue))
         submitted = true;
 
     ImGui::SameLine();
@@ -100,22 +123,32 @@ void GUI::render() {
     }
 
     // Separator
-    ImGui::InvisibleButton("invisible_separator", ImVec2(1, config.legend_spacing_top));
+    auto& entries = plotter.get_expressions();
+    if (!entries.empty()) ImGui::InvisibleButton("invisible_separator", ImVec2(1, config.legend_spacing_top));
 
     if (ImGui::BeginTable("legend_table", 3, ImGuiTableFlags_SizingFixedFit)) {
         int id_counter = 0;
 
-        for (auto& entry : plotter.get_expressions()) {
+        for (auto& entry : entries) {
             // Unique ID for current entry
             ImGui::PushID(id_counter++);
             ImGui::TableNextRow();
 
             // Column 1: Solid checkbox with visibility toggle
             ImGui::TableNextColumn();
-            ImGui::PushStyleColor(ImGuiCol_CheckMark, theme::to_imvec(entry.color));
-            ImGui::SolidCheckbox(entry.parser.get_expression().c_str(), &entry.visible);
-            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-            ImGui::PopStyleColor();
+
+            // Truncate label if necessary
+            std::string full_label = entry.parser.get_expression();
+            std::string truncated_label = full_label;
+            if (truncated_label.length() > config.legend_label_length)
+                truncated_label = truncated_label.substr(0, config.legend_label_length) + "...";
+
+            ImGui::SolidCheckbox(truncated_label.c_str(), &entry.visible, entry.valid, theme::to_imvec(entry.color));
+            if (ImGui::IsItemHovered()) {
+                ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+                if (full_label.length() > config.legend_label_length)
+                    ImGui::SetTooltip("%s", full_label.c_str());
+            }
 
             // Column 2: Edit button
             ImGui::TableNextColumn();

@@ -30,10 +30,7 @@ App::~App() {
 void App::run(int argc, char** argv) {
     // Parse expressions from arguments
     for (int i = 1; i < argc; i++) {
-        if (!plotter.parse(argv[i])) {
-            // TODO: support invalid expressions appearing in legend with a warning and being editable
-            TraceLog(LOG_WARNING, "Invalid expression: '%s'", argv[i]);
-        }
+        plotter.parse(argv[i]);
     }
 
     while (running) {

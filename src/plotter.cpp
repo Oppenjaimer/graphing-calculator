@@ -2,18 +2,14 @@
 
 #include <cmath>
 
-bool Plotter::parse(std::string_view expression) {
+void Plotter::parse(std::string_view expression) {
     te_parser parser;
     parser.set_variables_and_functions({{"x", &x}});
 
-    if (parser.compile(expression)) {
-        Color color = colors[parsed_expressions.size() % colors.size()];
-        parsed_expressions.push_back({std::move(parser), color, true});
+    bool valid = parser.compile(expression);
+    Color color = colors[parsed_expressions.size() % colors.size()];
 
-        return true;
-    }
-
-    return false;
+    parsed_expressions.push_back({std::move(parser), color, valid, valid});
 }
 
 void Plotter::plot(const Camera2D& camera) {
