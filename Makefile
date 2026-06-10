@@ -14,6 +14,16 @@ CXXFLAGS = -std=c++20 -Wall -Wextra -pedantic -I$(INC_DIR) \
 		   -isystem$(IMGUI_DIR) -isystem$(RLIMGUI_DIR) -isystem$(TINYEXPR_DIR)
 LDFLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
+ifeq ($(DEBUG), 1)
+    CXXFLAGS += -O0 -g
+    BUILD_DIR = build/debug
+    BIN_DIR = bin/debug
+else
+    CXXFLAGS += -O3 -march=native -flto
+    BUILD_DIR = build/release
+    BIN_DIR = bin/release
+endif
+
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC_FILES))
 
