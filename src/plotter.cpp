@@ -7,9 +7,22 @@ void Plotter::parse(std::string_view expression) {
     parser.set_variables_and_functions({{"x", &x}});
 
     bool valid = parser.compile(expression);
-    Color color = colors[parsed_expressions.size() % colors.size()];
+    Color color = colors[(color_idx++) % colors.size()];
 
-    parsed_expressions.push_back({std::move(parser), color, valid, valid});
+    parsed_expressions.push_back({std::string(expression), std::move(parser), color, valid, valid});
+}
+
+void Plotter::update(size_t idx, std::string_view expression) {
+    te_parser parser;
+    parser.set_variables_and_functions({{"x", &x}});
+
+    bool valid = parser.compile(expression);
+    auto& entry = parsed_expressions[idx];
+
+    entry.expression = expression;
+    entry.parser = std::move(parser);
+    entry.visible = valid;
+    entry.valid = valid;
 }
 
 void Plotter::plot(const Camera2D& camera) {

@@ -6,6 +6,7 @@ struct GUIConfig {
     // Panel
     int panel_x = 10;
     int panel_y = 10;
+    int input_initial_width = 120;
     int legend_spacing_top = 5;
     size_t legend_label_length = 30;
 
@@ -27,5 +28,6 @@ private:
 
     Plotter& plotter;
 
-    std::string input_str;
+    std::string input_str{};
+    int edit_idx = -1;
 };

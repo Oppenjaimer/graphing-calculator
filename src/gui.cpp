@@ -101,25 +101,39 @@ void GUI::render() {
     ImGui::SetWindowPos(ImVec2(config.panel_x, config.panel_y), ImGuiCond_FirstUseEver);
 
     // Compute input width
-    float button_width = ImGui::CalcTextSize("Add").x + ImGui::GetStyle().FramePadding.x * 2.0f;
+    const char* button_text = edit_idx >= 0 ? "Save" : "Add";
+    float button_width = ImGui::CalcTextSize(button_text).x + ImGui::GetStyle().FramePadding.x * 2.0f;
     float input_width = ImGui::GetContentRegionAvail().x - button_width - ImGui::GetStyle().ItemSpacing.x;
-    ImGui::SetNextItemWidth(input_width);
+    ImGui::SetNextItemWidth(input_width >= config.input_initial_width ? input_width : config.input_initial_width);
 
     // Input expression
-    bool submitted = false;
-    if (ImGui::InputTextWithHint("##input", "Expression...", &input_str, ImGuiInputTextFlags_EnterReturnsTrue))
-        submitted = true;
+    static bool focus_input = false;
+    if (focus_input) {
+        ImGui::SetKeyboardFocusHere();
+        focus_input = false;
+    }
+
+    bool submitted = ImGui::InputTextWithHint("##input", "Expression...", &input_str, ImGuiInputTextFlags_EnterReturnsTrue);
 
     ImGui::SameLine();
-    if (ImGui::Button("Add"))
-        submitted = true;
-
+    submitted |= ImGui::Button(button_text);
     if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
     // Add expression to plotter and clear input
     if (submitted) {
-        if (!input_str.empty()) plotter.parse(input_str);
+        if (!input_str.empty()) {
+            if (edit_idx >= 0) {
+                // Edit mode
+                plotter.update(edit_idx, input_str);
+                edit_idx = -1;
+            } else {
+                // Normal mode
+                plotter.parse(input_str);
+            }
+        }
+
         input_str.clear();
+        focus_input = true;
     }
 
     // Separator
@@ -129,7 +143,9 @@ void GUI::render() {
     if (ImGui::BeginTable("legend_table", 3, ImGuiTableFlags_SizingFixedFit)) {
         int id_counter = 0;
 
-        for (auto& entry : entries) {
+        for (size_t i = 0; i < entries.size(); i++) {
+            auto& entry = entries[i];
+
             // Unique ID for current entry
             ImGui::PushID(id_counter++);
             ImGui::TableNextRow();
@@ -138,7 +154,7 @@ void GUI::render() {
             ImGui::TableNextColumn();
 
             // Truncate label if necessary
-            std::string full_label = entry.parser.get_expression();
+            std::string full_label = entry.expression;
             std::string truncated_label = full_label;
             if (truncated_label.length() > config.legend_label_length)
                 truncated_label = truncated_label.substr(0, config.legend_label_length) + "...";
@@ -152,12 +168,16 @@ void GUI::render() {
 
             // Column 2: Edit button
             ImGui::TableNextColumn();
-            ImGui::Button("Edit");
+            if (ImGui::Button("Edit")) {
+                input_str = entry.expression;
+                edit_idx = static_cast<int>(i);
+                focus_input = true;
+            }
             if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
             // Column 3: Remove button
             ImGui::TableNextColumn();
-            ImGui::Button("Remove");
+            if (ImGui::Button("Remove")) entries.erase(entries.begin() + i);
             if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
             ImGui::PopID();
