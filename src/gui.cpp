@@ -195,7 +195,7 @@ void GUI::display_coords(const Camera2D& camera, bool over_panel) {
     Vector2 mouse_screen = GetMousePosition();
     Vector2 mouse_world = GetScreenToWorld2D(mouse_screen, camera);
 
-    const char* text = TextFormat("(%.4f, %.4f)", mouse_world.x, mouse_world.y);
+    const char* text = TextFormat("(%.4f, %.4f)", mouse_world.x, -mouse_world.y);
     int text_width = MeasureText(text, config.coords_size);
     Vector2 text_pos = Vector2Add(mouse_screen, {-text_width / 2.0f, -config.coords_offset});
 
